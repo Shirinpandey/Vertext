@@ -22,14 +22,14 @@ def classify(text: str) -> str:
 
         Text to classify: {text}
         """
-        # Use a single HumanMessage with all text
-    messages = [HumanMessage(content=prompt_text)]
+
+    # messages = [HumanMessage(content=prompt_text)]
         
 
     
     try:
         # Call the Ollama model
-        response = model.invoke(messages)
+        response = model.invoke([{"role": "user", "content": prompt_text}])
         print(f"Raw classification response: {response}")
 
         # Validate the output
