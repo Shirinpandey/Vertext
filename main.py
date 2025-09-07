@@ -30,7 +30,6 @@ tools = [
 # Define state type
 class AgentState(TypedDict):
     messages: Annotated[Sequence[BaseMessage], add_messages]
-    next_step: str
 
 # Define state management functions
 def should_end(state: AgentState) -> Union[str, None]:
@@ -55,7 +54,7 @@ def call_llm(state: AgentState) -> AgentState:
     """Process messages through the LLM"""
     messages = state['messages']
     response = model.invoke(messages)
-    return {"messages": messages + [AIMessage(content=response)]}
+    return {"messages": messages + [AIMessage(content=str(response))]}
 
 # Create graph
 workflow = StateGraph(AgentState)
@@ -78,17 +77,28 @@ workflow.add_node("llm", call_llm)
 
 # Add edges
 workflow.add_edge(START, "llm")
-workflow.add_edge("llm", determine_next_step)
-workflow.add_edge("classify_tool", "llm")
-workflow.add_edge("coding_tool", "llm")
 workflow.add_conditional_edges(
     "llm",
     should_end,
     {
-        None: determine_next_step,
-        END: END,
+        None: "classify_tool",
+        END: END
     }
 )
+
+workflow.add_conditional_edges(
+    "classify_tool",
+    determine_next_step,
+    {
+        "coding_tool": "coding_tool",
+        "classify_tool": "llm"
+    }
+)
+
+workflow.add_edge("coding_tool", "llm")
+
+# Remove this problematic edge
+# workflow.add_edge("llm", determine_next_step)  # This was causing the error
 
 # Compile graph
 chain = workflow.compile()
@@ -104,8 +114,7 @@ while True:
         "messages": [
             SystemMessage(content="You are a helpful AI assistant that can classify and handle coding tasks."),
             HumanMessage(content=user_input)
-        ],
-        "next_step": "classify_tool"
+        ]
     }
 
     try:
