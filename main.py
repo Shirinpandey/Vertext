@@ -27,9 +27,9 @@ while True: # keeps asking for user input until 'exit' is typed
     if user_input.lower() == "exit":
         break
     try:
-        output = agent.invoke({"input": user_input}) # sends your input to agent
-        # agent decides if it shoudl answer or call claissify tool
-
+        # whatever u typed gets sent to agent
+        output = agent.invoke({"input": user_input}) 
+        # agent decides if it shoudl answer or call claissify tool and result of tht proccess gets stored in output
         # confused abt this line???????????????
         print("AI Output:", output['output_text'] if isinstance(output, dict) else output)
     except Exception as e:
