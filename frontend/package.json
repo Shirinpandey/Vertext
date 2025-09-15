@@ -1,0 +1,28 @@
+{
+  "name": "vertext-oauth-frontend",
+  "version": "1.0.0",
+  "description": "A simple OAuth frontend for Google and GitHub authentication",
+  "main": "src/index.html",
+  "scripts": {
+    "dev": "vite --port 3000",
+    "build": "vite build",
+    "preview": "vite preview --port 3000",
+    "serve": "npx http-server src -p 3000 -c-1 -o",
+    "start": "npm run serve"
+  },
+  "dependencies": {
+    "http-server": "^14.1.1"
+  },
+  "devDependencies": {
+    "vite": "^7.1.5"
+  },
+  "keywords": [
+    "oauth",
+    "google",
+    "github",
+    "authentication",
+    "frontend"
+  ],
+  "author": "",
+  "license": "MIT"
+}
